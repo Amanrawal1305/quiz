@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Modern Quiz App</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      background: linear-gradient(135deg, #00c9ff, #92fe9d);
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .quiz-box {
+      background: #fff;
+      padding: 30px 40px;
+      border-radius: 15px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+      width: 100%;
+      max-width: 500px;
+      text-align: center;
+    }
+
+    h1 {
+      margin-bottom: 20px;
+      font-size: 24px;
+      color: #333;
+    }
+
+    .question {
+      font-weight: 600;
+      margin-bottom: 20px;
+      color: #222;
+    }
+
+    .options button {
+      display: block;
+      width: 100%;
+      padding: 12px;
+      margin: 10px 0;
+      border: none;
+      border-radius: 8px;
+      background-color: #f1f1f1;
+      cursor: pointer;
+      font-size: 16px;
+      transition: background-color 0.3s;
+    }
+
+    .options button:hover {
+      background-color: #e0e0e0;
+    }
+
+    .correct {
+      background-color: #d4edda !important;
+      color: #155724;
+    }
+
+    .incorrect {
+      background-color: #f8d7da !important;
+      color: #721c24;
+    }
+
+    .next-btn, .start-btn, .restart-btn {
+      background: #00c9ff;
+      color: #fff;
+      padding: 12px 20px;
+      border: none;
+      border-radius: 8px;
+      margin-top: 20px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: 0.3s ease;
+    }
+
+    .next-btn:hover, .start-btn:hover, .restart-btn:hover {
+      background: #009ec1;
+    }
+
+    .hide {
+      display: none;
+    }
+
+    .score {
+      font-size: 20px;
+      margin-top: 20px;
+      color: #333;
+    }
+  </style>
+</head>
+<body>
+  <div class="quiz-box" id="start-screen">
+    <h1>Welcome to the Quiz</h1>
+    <button class="start-btn" onclick="startQuiz()">Start Quiz</button>
+  </div>
+
+  <div class="quiz-box hide" id="quiz-container">
+    <div class="question" id="question">Question text</div>
+    <div class="options" id="options"></div>
+    <button class="next-btn" onclick="nextQuestion()">Next</button>
+  </div>
+
+  <div class="quiz-box hide" id="result-container">
+    <div class="score" id="final-score"></div>
+    <button class="restart-btn" onclick="restartQuiz()">Restart</button>
+  </div>
+
+  <script>
+    const questions = [
+      {
+        question: "What is the capital of Canada?",
+        options: ["Toronto", "Ottawa", "Vancouver", "Montreal"],
+        correct: "Ottawa"
+      },
+      {
+        question: "Which planet is known as the Red Planet?",
+        options: ["Venus", "Saturn", "Mars", "Jupiter"],
+        correct: "Mars"
+      },
+      {
+        question: "Which number should come next in the series? 2, 4, 8, 16, __",
+        options: ["18", "20", "32", "24"],
+        correct: "32"
+      },
+      {
+        question: "What language is primarily used for Android app development?",
+        options: ["Swift", "Kotlin", "Python", "JavaScript"],
+        correct: "Kotlin"
+      },
+      {
+        question: "What is the boiling point of water at sea level?",
+        options: ["100°C", "90°C", "120°C", "80°C"],
+        correct: "100°C"
+      }
+    ];
+
+    let currentIndex = 0;
+    let score = 0;
+
+    const startScreen = document.getElementById('start-screen');
+    const quizContainer = document.getElementById('quiz-container');
+    const resultContainer = document.getElementById('result-container');
+    const questionEl = document.getElementById('question');
+    const optionsEl = document.getElementById('options');
+    const finalScore = document.getElementById('final-score');
+
+    function startQuiz() {
+      startScreen.classList.add('hide');
+      quizContainer.classList.remove('hide');
+      currentIndex = 0;
+      score = 0;
+      showQuestion();
+    }
+
+    function showQuestion() {
+      const current = questions[currentIndex];
+      questionEl.textContent = current.question;
+      optionsEl.innerHTML = '';
+      current.options.forEach(opt => {
+        const button = document.createElement('button');
+        button.textContent = opt;
+        button.onclick = () => checkAnswer(button, current.correct);
+        optionsEl.appendChild(button);
+      });
+    }
+
+    function checkAnswer(button, correct) {
+      const buttons = optionsEl.querySelectorAll('button');
+      buttons.forEach(btn => btn.disabled = true);
+      if (button.textContent === correct) {
+        button.classList.add('correct');
+        score++;
+      } else {
+        button.classList.add('incorrect');
+        buttons.forEach(btn => {
+          if (btn.textContent === correct) {
+            btn.classList.add('correct');
+          }
+        });
+      }
+    }
+
+    function nextQuestion() {
+      currentIndex++;
+      if (currentIndex < questions.length) {
+        showQuestion();
+      } else {
+        endQuiz();
+      }
+    }
+
+    function endQuiz() {
+      quizContainer.classList.add('hide');
+      resultContainer.classList.remove('hide');
+      finalScore.textContent = `You scored ${score} out of ${questions.length}`;
+    }
+
+    function restartQuiz() {
+      resultContainer.classList.add('hide');
+      startScreen.classList.remove('hide');
+    }
+  </script>
+</body>
+</html>
